@@ -92,9 +92,13 @@ fig_5 = plotly.express.scatter(dataframe_correlation,
                                title='Co-relation <expanding> between Apple and Microsoft')
 fig_5.show()
 
-#Calculate and plot the cumulative returns based on daily returns for each company and plot it as a line graph to see the growth over time
+#Calculation of cumulative returns and plotting it using area graph
+#Here, we are creating a column Daily returns using percentage change(in lambda function)
 dataframe['Daily_Return'] = dataframe.groupby('Company')['Close'].transform(lambda x: x.pct_change())
+print(dataframe)
+#We calculate the cumulative returns using cumulative sum (cumsum())
 dataframe['Cumulative_Return'] = (1 + dataframe.groupby('Company')['Daily_Return'].cumsum()).reset_index(0, drop=True)
+#Plotting the cumulative returns using area graph ranging 0.95 to 1.4
 fig_6 = plotly.express.area(dataframe,
                             x='Date',
                             y='Cumulative_Return',
@@ -102,13 +106,31 @@ fig_6 = plotly.express.area(dataframe,
                             facet_col='Company',
                             facet_col_wrap=2 ,
                             labels={'Cumulative_Return':'Cumulative returns'},
-                            title='Cumulative returns of stocks: ', range_y=[0.95,1.4])
+                            title='Cumulative returns of stocks: ',
+                            range_y=[0.95,1.4])
 fig_6.show()
 
+#Sentiment analysis(simple approach)
+def get_sentiment_score(text):
+    # Here, you can implement a basic sentiment analysis logic to determine positive, negative, or neutral sentiment
+    # For simplicity, let's assume positive sentiment if the stock price increased, negative if it decreased, and neutral otherwise
+    if text > 0:
+        return "Positive"
+    elif text < 0:
+        return "Negative"
+    else:
+        return "Neutral"
+#Calculate sentiment for each company stocks
+dataframe['Sentiment'] = dataframe.groupby('Company')['Close'].pct_change().apply(get_sentiment_score)
+print(dataframe)
+# Plot the sentiment analysis
+fig_7 = plotly.express.line(dataframe.reset_index(), x='Date', y='Close', color='Sentiment', title='Market sentiment analysis')
+fig_7.show()
+
 #Analyze the trading volume of each stock and visualize it using a bar graph
-fig_7 = plotly.express.bar(dataframe,
+fig_8 = plotly.express.bar(dataframe,
                            x='Date',
                            y='Volume',
                            color='Company',
                            title='Trading volume of stocks: ')
-fig_7.show()
+fig_8.show()
