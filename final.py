@@ -102,7 +102,7 @@ fig_6 = plotly.express.area(dataframe,
                             facet_col='Company',
                             facet_col_wrap=2 ,
                             labels={'Cumulative_Return':'Cumulative returns'},
-                            title='Cumulative returns of stocks: ')
+                            title='Cumulative returns of stocks: ', range_y=[0.95,1.4])
 fig_6.show()
 
 #Analyze the trading volume of each stock and visualize it using a bar graph
